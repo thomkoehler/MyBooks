@@ -9,11 +9,13 @@ import {AppComponent} from './app.component';
 import {rootRouterConfig} from './app.routes';
 
 import {BooksComponent} from './books/books.component';
+import {AuthorsComponent} from './authors/authors.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    BooksComponent
+    BooksComponent,
+    AuthorsComponent
   ],
   imports: [
     BrowserModule,
