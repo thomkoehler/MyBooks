@@ -1,0 +1,11 @@
+
+{
+  "mySqlHost": "",
+  "mySqlDatabase": "MyBooks",
+  "mySqlPort": 5000,
+  "mySqlUser": "root",
+  "mySqlPassword": "password",
+  "port": 3000
+}
+
+
