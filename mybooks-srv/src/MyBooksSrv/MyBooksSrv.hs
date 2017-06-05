@@ -39,5 +39,4 @@ getPersonR = do
   (MyBooksSrv config) <- getYesod
   ps <- liftIO $ getAllPersons config
   returnJson ps
-    
 
