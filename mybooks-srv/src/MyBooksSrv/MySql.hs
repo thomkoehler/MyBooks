@@ -1,8 +1,5 @@
 
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeFamilies #-}
 
 module MyBooksSrv.MySql(initMySql) where
 
@@ -12,12 +9,12 @@ import Database.Persist
 import Database.Persist.MySQL
 import Database.Persist.TH
 import Yesod
-import Database.Persist.MySQL
 import Data.Aeson
 
 import MyBooksSrv.DbModels
 import MyBooksSrv.Config
 import MyBooksSrv.MyBooksSrv
+import MyBooksSrv.DbRepository
 
 
 
@@ -36,5 +33,5 @@ initMySql = do
       printMigration migrateAll
       runMigration migrateAll
       
-    warp (port config) MyBooksSrv
+    warp (port config) (MyBooksSrv config)
       

@@ -31,7 +31,9 @@ library
     monad-logger -any,
     yesod -any,
     aeson -any,
-    bytestring -any
+    bytestring -any,
+    resource-pool -any,
+    monad-logger -any
     
   default-language:    Haskell2010
 
