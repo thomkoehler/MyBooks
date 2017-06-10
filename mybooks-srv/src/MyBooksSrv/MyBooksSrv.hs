@@ -30,7 +30,7 @@ data MyBooksSrv = MyBooksSrv
 
 mkYesod "MyBooksSrv" [parseRoutes|
   / HomeR GET
---  /person PersonR GET
+  /person PersonR GET
 |]
 
 
@@ -41,14 +41,11 @@ getHomeR :: Handler Value
 getHomeR = returnJson $ Person "Sabine"
 
   
-{-
-  
 getPersonR :: Handler Value
 getPersonR = do
   (MyBooksSrv config) <- getYesod
   ps <- liftIO $ getAllPersons config
   returnJson ps
--}
 
 
 migration = return ()
