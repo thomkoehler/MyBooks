@@ -3,12 +3,12 @@
 
 module MyBooksSrv.Config where
 
-import qualified Data.ByteString.Lazy as B
-import GHC.Generics
 import Data.Aeson
+import qualified Data.ByteString.Lazy as B
 import Data.Word
-import Text.Printf
 import Data.Text
+import GHC.Generics
+import Text.Printf
 
 
 data Config = Config
@@ -36,5 +36,3 @@ fromFile path = do
   case decode configTxt of
     Just config -> return config
     Nothing -> error $ printf "Format error file '%s'" path
-
-

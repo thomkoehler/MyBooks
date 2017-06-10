@@ -1,11 +1,9 @@
 
 {
-  "mySqlHost": "",
-  "mySqlDatabase": "MyBooks",
-  "mySqlPort": 5000,
-  "mySqlUser": "root",
-  "mySqlPassword": "password",
-  "port": 3000
+  "database": "MyBook",
+  "dbHost": "localhost",
+  "dbPort": 50342,
+  "dbUser": "admin",
+  "dbPassword": "password",
+  "srvPort": 3000
 }
-
-

@@ -12,7 +12,6 @@
 
 module MyBooksSrv.DbModels where
 
-import Database.Persist 
 import Database.Persist.TH
 import Language.Haskell.TH.Syntax
 import Database.Persist.MongoDB

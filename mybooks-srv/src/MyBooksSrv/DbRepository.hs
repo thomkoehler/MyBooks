@@ -1,33 +1,23 @@
 
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 module MyBooksSrv.DbRepository(getAllPersons) where
 
-import Data.Pool
-import Database.Persist.Sql.Types.Internal
+import Control.Monad.IO.Class
+import Control.Monad.Trans.Control
 import Database.Persist.MongoDB
-import Control.Monad.Logger
 
 import MyBooksSrv.DbModels
 import MyBooksSrv.Config
 
 
-
-defaultPersons :: [Person]
-defaultPersons = 
-  [
-    Person "Stanislaw Lem",
-    Person "Philip K. Dick",
-    Person "Dan Simmons",
-    Person "Ian Banks"
-  ]
+runMongo :: (MonadBaseControl IO m, MonadIO m) => Config -> Action m b -> m b
+runMongo config action = do
+  let mongoConf = defaultMongoConf $ database config
+  withMongoPool mongoConf $ \pool -> runMongoDBPool master action pool
 
 
 getAllPersons :: Config -> IO [Person]
-getAllPersons config = do
-  let mongoConf = defaultMongoConf $ database config
-  withMongoPool mongoConf $ \pool -> do
-    flip (runMongoDBPool master) pool $ do
-      ps <- selectList [] []
-      return $ map (\(Entity k r) -> r) ps
-
+getAllPersons config = runMongo config $ do
+  ps <- selectList [] []
+  return $ map (\(Entity _ r) -> r) ps
