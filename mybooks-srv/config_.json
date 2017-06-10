@@ -2,7 +2,7 @@
 {
   "database": "MyBook",
   "dbHost": "localhost",
-  "dbPort": 50342,
+  "dbPort": 27017,
   "dbUser": "admin",
   "dbPassword": "password",
   "srvPort": 3000

@@ -16,6 +16,7 @@ import Yesod
 import MyBooksSrv.DbModels
 import MyBooksSrv.DbRepository
 import MyBooksSrv.Config
+import MyBooksSrv.Utilities
 
 
 defaultPersons :: [Person]
@@ -50,15 +51,15 @@ getPersonR = do
   returnJson ps
 
 
-migration :: ReaderT MongoContext IO ()
-migration = do
+migration :: Config -> ReaderT MongoContext IO ()
+migration cfg = do
   _ <- insert $ defaultPersons !! 0
   return ()
 
 
 initMongoDB :: IO ()
 initMongoDB = do
-  cfg <- fromFile "config.json"
-  let mongoConf = defaultMongoConf $ database cfg
-  withMongoPool mongoConf $ \pool -> flip (runMongoDBPool master) pool migration
+  cfg <- loadFromFile "config.json"
+  defData <- loadFromFile "defaultData.json"
+  importData defData cfg
   warp (srvPort cfg) (MyBooksSrv cfg)

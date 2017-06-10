@@ -25,6 +25,8 @@ library
     MyBooksSrv.Config
     MyBooksSrv.DbModels
     MyBooksSrv.DbRepository
+    MyBooksSrv.ImportData
+    MyBooksSrv.Utilities
   
   build-depends:       
     base >= 4.7 && < 5, 
@@ -40,7 +42,8 @@ library
     monad-logger -any,
     template-haskell -any,
     mtl -any,
-    monad-control -any
+    monad-control -any,
+    network -any
     
   default-language:    Haskell2010
 
