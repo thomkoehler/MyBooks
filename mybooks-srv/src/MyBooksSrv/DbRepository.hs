@@ -4,8 +4,8 @@
 module MyBooksSrv.DbRepository where
 
 import Data.Pool
-import Database.Persist.MySQL
 import Database.Persist.Sql.Types.Internal
+import Database.Persist.MongoDB
 import Control.Monad.Logger
 
 import MyBooksSrv.DbModels
@@ -13,6 +13,8 @@ import MyBooksSrv.Config
 
 
 type ConnPool = Pool SqlBackend
+
+{-
 
 
 defaultPersons :: [Person]
@@ -27,7 +29,7 @@ defaultPersons =
 
 getAllPersons :: Config -> IO [Person]
 getAllPersons config = do
-  let connectionInfo = defaultConnectInfo
+  let connectionInfo = undefined defaultConnectInfo
                         { 
                           connectPort = mySqlPort config,
                           connectPassword = mySqlPassword config,
@@ -39,4 +41,4 @@ getAllPersons config = do
 getAllPersons' :: SqlBackend -> IO [Person]
 getAllPersons' _ = return []
 
-
+-}

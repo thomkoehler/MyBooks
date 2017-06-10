@@ -8,18 +8,19 @@ import GHC.Generics
 import Data.Aeson
 import Data.Word
 import Text.Printf
+import Data.Text
 
 
 data Config = Config
   {
-    mySqlDatabase :: String,
-    mySqlHost :: String,
-    mySqlPort :: Word16,
-    mySqlUser :: String,
-    mySqlPassword :: String,
-    port :: Int
+    database :: Text,
+    dbHost :: String,
+    dbPort :: Word16,
+    dbUser :: String,
+    dbPassword :: String,
+    srvPort :: Int
   }
-  deriving (Generic, Show)
+  deriving(Generic, Show)
   
   
 instance ToJSON Config where

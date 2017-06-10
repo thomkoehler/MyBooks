@@ -1,6 +1,7 @@
+
 module Main where
 
-import MyBooksSrv.MySql
+import MyBooksSrv.MyBooksSrv
 
 main :: IO ()
-main = initMySql
+main = initMongoDB

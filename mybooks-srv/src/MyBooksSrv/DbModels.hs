@@ -12,11 +12,15 @@
 
 module MyBooksSrv.DbModels where
 
-import Database.Persist
+import Database.Persist 
 import Database.Persist.TH
+import Language.Haskell.TH.Syntax
+import Database.Persist.MongoDB
 import Data.Text
 
-share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
+
+let mongoSettings = (mkPersistSettings (ConT ''MongoContext)) {mpsGeneric = False}
+ in share [mkPersist mongoSettings] [persistLowerCase|
 Book json
   title Text
   isbn13 String
