@@ -32,19 +32,25 @@ runMongo config action = do
   withMongoPool mongoConf $ \pool -> runMongoDBPool master action pool
 
 
-getAllPersons :: Config -> IO [Person]
+getAllPersons :: (MonadBaseControl IO m, MonadIO m) => Config -> m [Person]
 getAllPersons config = runMongo config $ do
   ps <- selectList [] []
   return $ map (\(Entity _ r) -> r) ps
   
   
+--importData :: (MonadBaseControl IO m, MonadIO m) => ImportData -> Config -> m ()
 importData :: ImportData -> Config -> IO ()
 importData importData config = runMongo config $ do
-  _forM (authors importData) $ \atr -> do
-    let n = name $ author atr
-    ps <- selectList [PersonName ==. n] [LimitTo 1]
-    case ps of
-      [] -> insert atr >> return ()
-      otherwise  -> return ()
-  return ()
-
+  _forM (authors importData) importAuthor
+ 
+ 
+--importAuthor :: (MonadBaseControl IO m, MonadIO m) => ImportAuthor -> Action m ()
+importAuthor :: ImportAuthor -> Action IO ()
+importAuthor a = do
+  let 
+    p = author a
+    n = personName p
+  ps <- selectList [PersonName ==. n] [LimitTo 1]
+  case ps of
+    [] -> insert p >> return ()
+    otherwise  -> return ()

@@ -1,0 +1,22 @@
+{
+  "authors": [
+    {
+      "author":
+      {
+        "name": "Stanislaw Lem"
+      },
+      
+      "books": [
+        {
+          "title": "Solaris",
+          "isbn13": "978-3548606118"
+        },
+        {
+          "title": "Der futurologische Kongreß",
+          "isbn13": "978-3518370346"
+        }
+      ]
+    }
+  ]
+}
+
