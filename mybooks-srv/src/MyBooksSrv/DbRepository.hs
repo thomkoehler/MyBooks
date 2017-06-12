@@ -3,7 +3,8 @@
 
 module MyBooksSrv.DbRepository
 (
-  getAllPersons, 
+  getAllPersons,
+  getAllBooks,
   importData
 ) 
 where
@@ -36,6 +37,12 @@ getAllPersons :: (MonadBaseControl IO m, MonadIO m) => Config -> m [Person]
 getAllPersons config = runMongo config $ do
   ps <- selectList [] []
   return $ map (\(Entity _ r) -> r) ps
+
+
+getAllBooks :: (MonadBaseControl IO m, MonadIO m) => Config -> m [Book]
+getAllBooks config = runMongo config $ do
+  bs <- selectList [] []
+  return $ map (\(Entity _ r) -> r) bs
   
   
 importData :: (MonadBaseControl IO m, MonadIO m) => ImportData -> Config -> m ()
@@ -49,6 +56,15 @@ importAuthor a = do
     p = author a
     n = personName p
   ps <- selectList [PersonName ==. n] [LimitTo 1]
-  case ps of
-    [] -> insert p >> return ()
-    _  -> return ()
+  personKey <- case ps of
+    [Entity k _] -> return k
+    _ -> insert p
+
+  forM_ (books a) (importBook personKey)
+
+
+importBook :: (MonadBaseControl IO m, MonadIO m) => Key Person -> ImportBook -> Action m ()
+importBook authorId (ImportBook t i) = do
+  bs <- selectList [BookTitle ==. t] [LimitTo 1]
+  when (null bs) $ insert (Book t i authorId) >> return ()
+

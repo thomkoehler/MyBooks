@@ -4,7 +4,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module MyBooksSrv.MyBooksSrv where
+module MyBooksSrv.MyBooksSrv(runWithMongoDB) where
 
 import Control.Monad.IO.Class
 import Yesod
@@ -24,6 +24,7 @@ data MyBooksSrv = MyBooksSrv
 mkYesod "MyBooksSrv" [parseRoutes|
   / HomeR GET
   /person PersonR GET
+  /book BookR GET
 |]
 
 
@@ -41,8 +42,15 @@ getPersonR = do
   returnJson ps
 
 
-initMongoDB :: IO ()
-initMongoDB = do
+getBookR :: Handler Value
+getBookR = do
+  (MyBooksSrv cfg) <- getYesod
+  ps <- liftIO $ getAllBooks cfg
+  returnJson ps
+
+
+runWithMongoDB :: IO ()
+runWithMongoDB = do
   cfg <- loadFromFile "config.json"
   defData <- loadFromFile "defaultData.json"
   importData defData cfg
