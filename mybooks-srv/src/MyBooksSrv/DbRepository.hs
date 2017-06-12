@@ -18,6 +18,7 @@ import MyBooksSrv.DbModels
 import MyBooksSrv.Config
 import MyBooksSrv.ImportData
 
+
 runMongo :: (MonadBaseControl IO m, MonadIO m) => Config -> Action m b -> m b
 runMongo config action = do
   let 
@@ -28,7 +29,6 @@ runMongo config action = do
                     mgPort = PortNumber $ toEnum $ dbPort config,
                     mgAuth = Just $ MongoAuth (dbUser config) $ (dbPassword config)
                   }
-  liftIO $ putStrLn $ show mongoConf
   withMongoPool mongoConf $ \pool -> runMongoDBPool master action pool
 
 
@@ -38,14 +38,12 @@ getAllPersons config = runMongo config $ do
   return $ map (\(Entity _ r) -> r) ps
   
   
---importData :: (MonadBaseControl IO m, MonadIO m) => ImportData -> Config -> m ()
-importData :: ImportData -> Config -> IO ()
-importData importData config = runMongo config $ do
-  _forM (authors importData) importAuthor
+importData :: (MonadBaseControl IO m, MonadIO m) => ImportData -> Config -> m ()
+importData impData config = runMongo config $ do
+  forM_ (authors impData) importAuthor
  
  
---importAuthor :: (MonadBaseControl IO m, MonadIO m) => ImportAuthor -> Action m ()
-importAuthor :: ImportAuthor -> Action IO ()
+importAuthor :: (MonadBaseControl IO m, MonadIO m) => ImportAuthor -> Action m ()
 importAuthor a = do
   let 
     p = author a
@@ -53,4 +51,4 @@ importAuthor a = do
   ps <- selectList [PersonName ==. n] [LimitTo 1]
   case ps of
     [] -> insert p >> return ()
-    otherwise  -> return ()
+    _  -> return ()

@@ -16,6 +16,33 @@
           "isbn13": "978-3518370346"
         }
       ]
+    },
+    {
+      "author":
+      {
+        "name": "Philip K. Dick"
+      },
+      
+      "books": [
+      ]
+    },
+    {
+      "author":
+      {
+        "name": "Dan Simmons"
+      },
+      
+      "books": [
+      ]
+    },
+    {
+      "author":
+      {
+        "name": "Herbert W. Franke"
+      },
+      
+      "books": [
+      ]
     }
   ]
 }
