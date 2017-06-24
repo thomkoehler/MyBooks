@@ -24,32 +24,16 @@ import MyBooksSrv.ImportData
 
 type DbAction a = ReaderT SqlBackend (LoggingT IO) a
 
+
 runSqliteDb :: Config -> DbAction a -> IO a
-runSqliteDb config action = do
+runSqliteDb config action = 
   runStderrLoggingT $ withSqliteConn (database config) $ \sqlbackend -> runSqlConn action sqlbackend
 
-{-
-test :: IO ()
-test =
-   runStderrLoggingT $ withSqliteConn ":memory:" $ \sqlbackend -> do
-     --void $ runSqlConn (insert $ Foo 1) sqlbackend
-     --liftIO $ threadDelay (60 * 1000000)
-     runSqlConn (runMigration migrateAll) sqlbackend
-     ret <- runSqlConn getAllPersons sqlbackend
-     return ()
-     
-getAllPersons :: ReaderT SqlBackend (LoggingT IO) [Person]
-getAllPersons = do
-  ps <- selectList [] []
-  return $ (map (\(Entity _ r) -> r) ps :: [Person])
-
--}
-  
   
 getAllPersons :: Config -> IO [Person]
 getAllPersons config = runSqliteDb config $ do
   ps <- selectList [] []
-  return $ (map (\(Entity _ r) -> r) ps :: [Person])
+  return $ map (\(Entity _ r) -> r) ps
   
 
 getAllBooks :: Config -> IO [Book]
@@ -59,8 +43,7 @@ getAllBooks config = runSqliteDb config $ do
 
   
 importData :: ImportData -> Config -> IO ()
-importData impData config = runSqliteDb config $ do
-  forM_ (authors impData) importAuthor
+importData impData config = runSqliteDb config $ forM_ (authors impData) importAuthor
  
  
 importAuthor :: ImportAuthor -> DbAction ()
@@ -79,4 +62,4 @@ importAuthor a = do
 importBook :: Key Person -> ImportBook -> DbAction ()
 importBook authorId (ImportBook t i) = do
   bs <- selectList [BookTitle ==. t] [LimitTo 1]
-  when (null bs) $ insert (Book t i authorId) >> return ()
+  when (null bs) $ void $ insert (Book t i authorId)
