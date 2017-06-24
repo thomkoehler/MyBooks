@@ -16,6 +16,7 @@ import Control.Monad
 import Control.Monad.Logger
 import Control.Monad.Trans.Reader
 import Database.Persist.Sqlite
+import Data.Text(Text)
 
 import MyBooksSrv.DbModels
 import MyBooksSrv.Config
@@ -43,23 +44,27 @@ getAllBooks config = runSqliteDb config $ do
 
   
 importData :: ImportData -> Config -> IO ()
-importData impData config = runSqliteDb config $ forM_ (authors impData) importAuthor
- 
- 
-importAuthor :: ImportAuthor -> DbAction ()
-importAuthor a = do
-  let 
-    p = author a
-    n = personName p
-  ps <- selectList [PersonName ==. n] [LimitTo 1]
+importData (ImportData bs ps) config = runSqliteDb config $ do
+  forM_ bs importBook
+  forM_ ps importPerson
+
+
+importBook :: Book -> DbAction ()
+importBook bk = do
+  bs <- selectList [BookTitle ==. (bookTitle bk)] [LimitTo 1]
+  when (null bs) $ void $ insert bk
+  return ()
+
+  
+importPerson :: ImportPerson -> DbAction ()
+importPerson (ImportPerson p bs) = do
+  ps <- selectList [PersonName ==. (personName p)] [LimitTo 1]
   personKey <- case ps of
     [Entity k _] -> return k
     _ -> insert p
+  forM_ bs $ insertBookAuthor personKey
+  return ()
 
-  forM_ (books a) (importBook personKey)
-
-
-importBook :: Key Person -> ImportBook -> DbAction ()
-importBook authorId (ImportBook t i) = do
-  bs <- selectList [BookTitle ==. t] [LimitTo 1]
-  when (null bs) $ void $ insert (Book t i authorId)
+--TODO insertBookAuthor
+insertBookAuthor :: Key Person -> Text -> DbAction ()
+insertBookAuthor personKey bookTitle = return ()

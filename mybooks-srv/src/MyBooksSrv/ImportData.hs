@@ -1,5 +1,6 @@
 
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DuplicateRecordFields #-}
 
 module MyBooksSrv.ImportData where
 
@@ -12,7 +13,8 @@ import MyBooksSrv.DbModels
 
 data ImportData = ImportData
   {
-    authors :: [ImportAuthor]
+    books :: [Book],
+    persons :: [ImportPerson]
   }
   deriving(Generic, Show)
 
@@ -22,27 +24,14 @@ instance ToJSON ImportData where
 instance FromJSON ImportData
 
 
-data ImportAuthor = ImportAuthor
+data ImportPerson = ImportPerson
   {
-    author :: Person,
-    books :: [ImportBook]
+      person :: Person,
+      books :: [Text]
   }
   deriving(Generic, Show)
   
-instance ToJSON ImportAuthor where
+instance ToJSON ImportPerson where
    toEncoding = genericToEncoding defaultOptions
    
-instance FromJSON ImportAuthor
-
-
-data ImportBook = ImportBook
-  {
-    title :: Text,
-    isbn13 :: String
-  }
-  deriving(Generic, Show)
-  
-instance ToJSON ImportBook where
-   toEncoding = genericToEncoding defaultOptions
-   
-instance FromJSON ImportBook
+instance FromJSON ImportPerson
