@@ -1,56 +1,69 @@
 
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module MyBooksSrv.DbRepository
 (
   getAllPersons,
   getAllBooks,
-  importData
+  importData,
+  runSqliteDb
 ) 
 where
 
 import Control.Monad
-import Control.Monad.IO.Class
-import Control.Monad.Trans.Control
-import Database.Persist.MongoDB
-import Network (PortID (PortNumber))
+import Control.Monad.Logger
+import Control.Monad.Trans.Reader
+import Database.Persist.Sqlite
 
 import MyBooksSrv.DbModels
 import MyBooksSrv.Config
 import MyBooksSrv.ImportData
 
 
-runMongo :: (MonadBaseControl IO m, MonadIO m) => Config -> Action m b -> m b
-runMongo config action = do
-  let 
-    defMongoConf = defaultMongoConf $ database config
-    mongoConf = defMongoConf
-                  {
-                    mgHost = dbHost config,
-                    mgPort = PortNumber $ toEnum $ dbPort config,
-                    mgAuth = Just $ MongoAuth (dbUser config) $ (dbPassword config)
-                  }
-  withMongoPool mongoConf $ \pool -> runMongoDBPool master action pool
+type DbAction a = ReaderT SqlBackend (LoggingT IO) a
 
+runSqliteDb :: Config -> DbAction a -> IO a
+runSqliteDb config action = do
+  runStderrLoggingT $ withSqliteConn (database config) $ \sqlbackend -> runSqlConn action sqlbackend
 
-getAllPersons :: (MonadBaseControl IO m, MonadIO m) => Config -> m [Person]
-getAllPersons config = runMongo config $ do
+{-
+test :: IO ()
+test =
+   runStderrLoggingT $ withSqliteConn ":memory:" $ \sqlbackend -> do
+     --void $ runSqlConn (insert $ Foo 1) sqlbackend
+     --liftIO $ threadDelay (60 * 1000000)
+     runSqlConn (runMigration migrateAll) sqlbackend
+     ret <- runSqlConn getAllPersons sqlbackend
+     return ()
+     
+getAllPersons :: ReaderT SqlBackend (LoggingT IO) [Person]
+getAllPersons = do
   ps <- selectList [] []
-  return $ map (\(Entity _ r) -> r) ps
+  return $ (map (\(Entity _ r) -> r) ps :: [Person])
 
+-}
+  
+  
+getAllPersons :: Config -> IO [Person]
+getAllPersons config = runSqliteDb config $ do
+  ps <- selectList [] []
+  return $ (map (\(Entity _ r) -> r) ps :: [Person])
+  
 
-getAllBooks :: (MonadBaseControl IO m, MonadIO m) => Config -> m [Book]
-getAllBooks config = runMongo config $ do
+getAllBooks :: Config -> IO [Book]
+getAllBooks config = runSqliteDb config $ do
   bs <- selectList [] []
   return $ map (\(Entity _ r) -> r) bs
+
   
-  
-importData :: (MonadBaseControl IO m, MonadIO m) => ImportData -> Config -> m ()
-importData impData config = runMongo config $ do
+importData :: ImportData -> Config -> IO ()
+importData impData config = runSqliteDb config $ do
   forM_ (authors impData) importAuthor
  
  
-importAuthor :: (MonadBaseControl IO m, MonadIO m) => ImportAuthor -> Action m ()
+importAuthor :: ImportAuthor -> DbAction ()
 importAuthor a = do
   let 
     p = author a
@@ -63,8 +76,7 @@ importAuthor a = do
   forM_ (books a) (importBook personKey)
 
 
-importBook :: (MonadBaseControl IO m, MonadIO m) => Key Person -> ImportBook -> Action m ()
+importBook :: Key Person -> ImportBook -> DbAction ()
 importBook authorId (ImportBook t i) = do
   bs <- selectList [BookTitle ==. t] [LimitTo 1]
   when (null bs) $ insert (Book t i authorId) >> return ()
-

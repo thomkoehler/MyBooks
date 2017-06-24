@@ -7,6 +7,7 @@
 module MyBooksSrv.MyBooksSrv(runWithMongoDB) where
 
 import Control.Monad.IO.Class
+import Database.Persist.Sql
 import Yesod
 
 import MyBooksSrv.DbModels
@@ -20,7 +21,7 @@ data MyBooksSrv = MyBooksSrv
     config :: Config
   }
 
-  
+
 mkYesod "MyBooksSrv" [parseRoutes|
   / HomeR GET
   /person PersonR GET
@@ -52,6 +53,7 @@ getBookR = do
 runWithMongoDB :: IO ()
 runWithMongoDB = do
   cfg <- loadFromFile "config.json"
+  runSqliteDb cfg (runMigration migrateAll)
   defData <- loadFromFile "defaultData.json"
   importData defData cfg
   warp (srvPort cfg) (MyBooksSrv cfg)

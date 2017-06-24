@@ -1,9 +1,5 @@
 
 {
-  "database": "MyBook",
-  "dbHost": "localhost",
-  "dbPort": 27017,
-  "dbUser": "admin",
-  "dbPassword": "password",
+  "database": "MyBooks.sqlite",
   "srvPort": 3000
 }

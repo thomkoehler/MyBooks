@@ -11,10 +11,6 @@ import GHC.Generics
 data Config = Config
   {
     database :: !Text,
-    dbHost :: !Text,
-    dbPort :: !Int,
-    dbUser :: !Text,
-    dbPassword :: !Text,
     srvPort :: !Int
   }
   deriving(Generic, Show)
