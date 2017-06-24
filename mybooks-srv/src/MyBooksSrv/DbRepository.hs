@@ -8,6 +8,7 @@ module MyBooksSrv.DbRepository
   getAllPersons,
   getAllBooks,
   importData,
+  insertPerson,
   runSqliteDb
 ) 
 where
@@ -32,6 +33,10 @@ runSqliteDb config action =
   runStderrLoggingT $ withSqliteConn (database config) $ \sqlbackend -> runSqlConn action sqlbackend
 
   
+insertPerson :: Config -> Person -> IO PersonId
+insertPerson config person = runSqliteDb config $ insert person
+  
+  
 getAllPersons :: Config -> IO [Person]
 getAllPersons config = runSqliteDb config $ do
   ps <- selectList [] []
@@ -52,14 +57,14 @@ importData (ImportData bs ps) config = runSqliteDb config $ do
 
 importBook :: Book -> DbAction ()
 importBook bk = do
-  bs <- selectList [BookTitle ==. (bookTitle bk)] [LimitTo 1]
+  bs <- selectList [BookTitle ==. bookTitle bk] [LimitTo 1]
   when (null bs) $ void $ insert bk
   return ()
 
   
 importPerson :: ImportPerson -> DbAction ()
 importPerson (ImportPerson p bs) = do
-  ps <- selectList [PersonName ==. (personName p)] [LimitTo 1]
+  ps <- selectList [PersonName ==. personName p] [LimitTo 1]
   personKey <- case ps of
     [Entity k _] -> return k
     _ -> insert p

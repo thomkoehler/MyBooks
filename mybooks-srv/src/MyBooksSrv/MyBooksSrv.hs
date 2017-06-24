@@ -24,7 +24,7 @@ data MyBooksSrv = MyBooksSrv
 
 mkYesod "MyBooksSrv" [parseRoutes|
   / HomeR GET
-  /person PersonR GET
+  /person PersonR GET PUT
   /book BookR GET
 |]
 
@@ -35,6 +35,14 @@ instance Yesod MyBooksSrv
 getHomeR :: Handler Value
 getHomeR = returnJson $ Person "Sabine"
 
+  
+putPersonR :: Handler Value
+putPersonR = do
+  (MyBooksSrv cfg) <- getYesod
+  person <- requireJsonBody :: Handler Person
+  key <- liftIO $ insertPerson cfg person
+  returnJson key
+  
   
 getPersonR :: Handler Value
 getPersonR = do
