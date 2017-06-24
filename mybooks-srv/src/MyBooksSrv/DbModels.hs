@@ -22,6 +22,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Book json
   title Text
   isbn13 String
+  UniqueIsbn13 isbn13
   deriving Show
 
 Person json
@@ -31,7 +32,7 @@ Person json
 BookAuthor json
   bookId BookId
   personId PersonId
-  UniquePersonStore bookId personId
+  UniqueBookIdPersonId bookId personId
   deriving Show
   
 |]

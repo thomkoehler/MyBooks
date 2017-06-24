@@ -27,7 +27,7 @@ instance FromJSON ImportData
 data ImportPerson = ImportPerson
   {
       person :: Person,
-      books :: [Text]
+      books :: [String]
   }
   deriving(Generic, Show)
   

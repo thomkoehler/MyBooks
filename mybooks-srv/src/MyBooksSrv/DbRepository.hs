@@ -17,6 +17,7 @@ import Control.Monad.Logger
 import Control.Monad.Trans.Reader
 import Database.Persist.Sqlite
 import Data.Text(Text)
+import Text.Printf
 
 import MyBooksSrv.DbModels
 import MyBooksSrv.Config
@@ -65,6 +66,14 @@ importPerson (ImportPerson p bs) = do
   forM_ bs $ insertBookAuthor personKey
   return ()
 
---TODO insertBookAuthor
-insertBookAuthor :: Key Person -> Text -> DbAction ()
-insertBookAuthor personKey bookTitle = return ()
+  
+insertBookAuthor :: Key Person -> String -> DbAction ()
+insertBookAuthor personKey bookIsbn13 = do
+  bs <- selectList [BookIsbn13 ==. bookIsbn13] [LimitTo 1]
+  case bs of
+    [Entity bookKey _] -> do
+      bas <- selectList [BookAuthorBookId ==. bookKey, BookAuthorPersonId ==. personKey] [LimitTo 1]
+      case bas of
+        [] -> void $ insert $ BookAuthor bookKey personKey
+        _ -> return ()
+    _ -> error $ printf "Error: Book '%s' not found." bookIsbn13

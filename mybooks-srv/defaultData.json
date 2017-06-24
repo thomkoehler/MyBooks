@@ -1,49 +1,52 @@
 {
-  "authors": [
+  "books": [
     {
-      "author":
-      {
+      "title": "Solaris",
+      "isbn13": "978-3548606118"
+    },
+    {
+      "title": "Der futurologische Kongreß",
+      "isbn13": "978-3518370346"
+    },
+    {
+      "title": "Der Orchideenkäfig",
+      "isbn13": "9783442230181"
+    }
+  ],
+  
+  "persons": [
+    {
+      "person": {
         "name": "Stanislaw Lem"
       },
       
       "books": [
-        {
-          "title": "Solaris",
-          "isbn13": "978-3548606118"
-        },
-        {
-          "title": "Der futurologische Kongreß",
-          "isbn13": "978-3518370346"
-        }
+        "978-3548606118",
+        "978-3518370346"
       ]
     },
     {
-      "author":
-      {
+      "person": {
         "name": "Philip K. Dick"
       },
       
-      "books": [
-      ]
+      "books": []
     },
     {
-      "author":
-      {
+      "person": {
         "name": "Dan Simmons"
       },
       
-      "books": [
-      ]
+      "books": []
     },
     {
-      "author":
-      {
+      "person": {
         "name": "Herbert W. Franke"
       },
       
       "books": [
+        "9783442230181"
       ]
     }
   ]
 }
-
