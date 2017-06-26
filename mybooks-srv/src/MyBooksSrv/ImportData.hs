@@ -6,7 +6,6 @@ module MyBooksSrv.ImportData where
 
 import Data.Aeson
 import GHC.Generics
-import Data.Text
 
 import MyBooksSrv.DbModels
 

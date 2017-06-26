@@ -32,7 +32,7 @@ runSqliteDb :: Config -> DbAction a -> IO a
 runSqliteDb config action = 
   runStderrLoggingT $ withSqliteConn (database config) $ \sqlbackend -> runSqlConn action sqlbackend
 
-  
+
 insertPerson :: Config -> Person -> IO PersonId
 insertPerson config person = runSqliteDb config $ insert person
   
