@@ -10,6 +10,7 @@ module MyBooksSrv.MyBooksSrv(runWithMongoDB) where
 import Control.Monad.IO.Class
 import Database.Persist.Sql
 import Data.List
+import Data.Int
 import Yesod
 
 import MyBooksSrv.DbModels
@@ -26,7 +27,7 @@ mkYesod "MyBooksSrv" [parseRoutes|
 
   / HomeR GET
   /personList  PersonListR GET
-  /person/#Integer PersonR GET
+  /person/#Int64 PersonR GET
 
   /api/personList ApiPersonListR GET
   /api/person ApiInsertPersonR PUT
@@ -55,12 +56,12 @@ getPersonListR = do
     <h1>PersonList
     <body>
       <ol>
-        $forall p <- sortedPs
-          <li><a href=@{PersonR 1}>#{lastName p}, #{firstName p}
+        $forall (PersonListItem i fn ln) <- sortedPs
+          <li><a href=@{PersonR (fromSqlKey i)}>#{ln}, #{fn}
 |]
 
 
-getPersonR :: Integer -> Handler Html
+getPersonR :: Int64 -> Handler Html
 getPersonR personId = defaultLayout [whamlet|<h1>Person #{personId}|]
 
 
