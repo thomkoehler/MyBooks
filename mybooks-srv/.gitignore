@@ -4,5 +4,7 @@ client_session_key.aes
 *.sqlite
 .kdev4/
 *.kdev4
+MyBook.sqlite
+*.aes
 
 

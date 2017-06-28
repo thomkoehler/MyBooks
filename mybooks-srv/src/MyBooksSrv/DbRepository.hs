@@ -2,14 +2,16 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 
 module MyBooksSrv.DbRepository
 (
-  getAllPersons,
   getAllBooks,
   importData,
   insertPerson,
-  runSqliteDb
+  runSqliteDb,
+  getPersonList
 ) 
 where
 
@@ -17,12 +19,14 @@ import Control.Monad
 import Control.Monad.Logger
 import Control.Monad.Trans.Reader
 import Database.Persist.Sqlite
+import Database.Persist.Sql
 import Data.Text(Text)
 import Text.Printf
 
 import MyBooksSrv.DbModels
 import MyBooksSrv.Config
 import MyBooksSrv.ImportData
+import MyBooksSrv.DomainModels
 
 
 type DbAction a = ReaderT SqlBackend (LoggingT IO) a
@@ -33,16 +37,16 @@ runSqliteDb config action =
   runStderrLoggingT $ withSqliteConn (database config) $ \sqlbackend -> runSqlConn action sqlbackend
 
 
+getPersonList :: Config -> IO [PersonListItem]
+getPersonList config = runSqliteDb config $ do
+  rawList :: [(PersonId, Single Text, Single Text)] <- rawSql "SELECT id, first_name, last_name FROM person" []
+  return $ map (\(i, fn, ln) -> PersonListItem i (unSingle fn) (unSingle ln)) rawList
+
+
 insertPerson :: Config -> Person -> IO PersonId
 insertPerson config person = runSqliteDb config $ insert person
   
   
-getAllPersons :: Config -> IO [Person]
-getAllPersons config = runSqliteDb config $ do
-  ps <- selectList [] []
-  return $ map (\(Entity _ r) -> r) ps
-  
-
 getAllBooks :: Config -> IO [Book]
 getAllBooks config = runSqliteDb config $ do
   bs <- selectList [] []
@@ -64,7 +68,7 @@ importBook bk = do
   
 importPerson :: ImportPerson -> DbAction ()
 importPerson (ImportPerson p bs) = do
-  ps <- selectList [PersonName ==. personName p] [LimitTo 1]
+  ps <- selectList [PersonFirstName ==. personFirstName p, PersonLastName ==. personLastName p] [LimitTo 1]
   personKey <- case ps of
     [Entity k _] -> return k
     _ -> insert p

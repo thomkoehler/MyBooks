@@ -27,6 +27,7 @@ library
     MyBooksSrv.DbRepository
     MyBooksSrv.ImportData
     MyBooksSrv.Utilities
+    MyBooksSrv.DomainModels
   
   build-depends:       
     base >= 4.7 && < 5, 

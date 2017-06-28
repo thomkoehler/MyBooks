@@ -26,7 +26,9 @@ Book json
   deriving Show
 
 Person json
-  name Text
+  firstName Text
+  lastName Text
+  UniqueFirstNameLastName firstName lastName
   deriving Show
 
 BookAuthor json

@@ -17,7 +17,8 @@
   "persons": [
     {
       "person": {
-        "name": "Stanislaw Lem"
+        "firstName": "Stanislaw",
+        "lastName": "Lem"
       },
       
       "books": [
@@ -27,21 +28,24 @@
     },
     {
       "person": {
-        "name": "Philip K. Dick"
+        "firstName": "Philip K.",
+        "lastName": "Dick"
       },
       
       "books": []
     },
     {
       "person": {
-        "name": "Dan Simmons"
+        "firstName": "Dan",
+        "lastName": "Simmons"
       },
       
       "books": []
     },
     {
       "person": {
-        "name": "Herbert W. Franke"
+        "firstName": "Herbert W.",
+        "lastName": "Franke"
       },
       
       "books": [
