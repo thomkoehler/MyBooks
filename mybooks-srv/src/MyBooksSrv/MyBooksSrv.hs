@@ -5,7 +5,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ViewPatterns      #-}
 
-module MyBooksSrv.MyBooksSrv(runWithMongoDB) where
+module MyBooksSrv.MyBooksSrv(runWithDB) where
 
 import Control.Monad.IO.Class
 import Database.Persist.Sql
@@ -87,8 +87,8 @@ getApiBookR = do
   returnJson ps
 
 
-runWithMongoDB :: IO ()
-runWithMongoDB = do
+runWithDB :: IO ()
+runWithDB = do
   cfg <- loadFromFile "config.json"
   runSqliteDb cfg (runMigration migrateAll)
   defData <- loadFromFile "defaultData.json"

@@ -16,6 +16,8 @@ import Database.Persist.TH
 import Database.Persist.Sqlite
 import Data.Text
 
+import MyBooksSrv.FieldDataType
+
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 
@@ -36,5 +38,39 @@ BookAuthor json
   personId PersonId
   UniqueBookIdPersonId bookId personId
   deriving Show
-  
+
+Hashtag json
+  name Text
+  UniqueName name
+  deriving Show
+
+BookHashtag json
+  bookId BookId
+  hashtagId HashtagId
+  UniqueBookIdHashtagId bookId hashtagId
+  deriving Show
+
+PersonHashtag json
+  personId BookId
+  hashtagId HashtagId
+  UniquePersonIdHashtagId personId hashtagId
+  deriving Show
+
+FieldKind json
+  name Text
+  type FieldDataType
+  deriving Show
+
+PersonField json
+  kind FieldKindId
+  person PersonId
+  value Text
+  deriving Show
+
+BookField json
+  kind FieldKindId
+  book BookId
+  value Text
+  deriving Show
+
 |]
