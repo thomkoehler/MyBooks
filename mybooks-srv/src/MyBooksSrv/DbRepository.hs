@@ -7,12 +7,9 @@
 
 module MyBooksSrv.DbRepository
 (
-  getAllBooks,
   importData,
-  insertPerson,
   runSqliteDb,
-  getPersonList
-) 
+)
 where
 
 import Control.Monad
@@ -37,22 +34,6 @@ runSqliteDb config action =
   runStderrLoggingT $ withSqliteConn (database config) $ \sqlbackend -> runSqlConn action sqlbackend
 
 
-getPersonList :: Config -> IO [PersonListItem]
-getPersonList config = runSqliteDb config $ do
-  rawList :: [(PersonId, Single Text, Single Text)] <- rawSql "SELECT id, first_name, last_name FROM person" []
-  return $ map (\(i, fn, ln) -> PersonListItem i (unSingle fn) (unSingle ln)) rawList
-
-
-insertPerson :: Config -> Person -> IO PersonId
-insertPerson config person = runSqliteDb config $ insert person
-  
-  
-getAllBooks :: Config -> IO [Book]
-getAllBooks config = runSqliteDb config $ do
-  bs <- selectList [] []
-  return $ map (\(Entity _ r) -> r) bs
-
-  
 importData :: ImportData -> Config -> IO ()
 importData (ImportData bs ps) config = runSqliteDb config $ do
   forM_ bs importBook

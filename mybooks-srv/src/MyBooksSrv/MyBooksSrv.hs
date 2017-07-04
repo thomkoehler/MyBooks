@@ -18,6 +18,8 @@ import MyBooksSrv.DbRepository
 import MyBooksSrv.Config
 import MyBooksSrv.Utilities
 import MyBooksSrv.DomainModels
+import MyBooksSrv.PersonRepository
+import MyBooksSrv.BookRepository
 
 
 data MyBooksSrv = MyBooksSrv Config
@@ -61,8 +63,13 @@ getPersonListR = do
 |]
 
 
-getPersonR :: Int64 -> Handler Html
-getPersonR personId = defaultLayout [whamlet|<h1>Person #{personId}|]
+getPersonR :: Int64 -> Handler Value
+getPersonR personId = do
+  (MyBooksSrv cfg) <- getYesod
+  mbp <- liftIO $ getPerson cfg $ toSqlKey personId
+  case mbp of
+    Nothing -> notFound
+    (Just p) -> returnJson p
 
 
 getApiPersonListR :: Handler Value
