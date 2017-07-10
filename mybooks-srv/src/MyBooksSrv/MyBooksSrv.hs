@@ -3,7 +3,9 @@
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE ViewPatterns      #-}
+{-# LANGUAGE ViewPatterns #-}
+{-# OPTIONS_GHC -fno-warn-unused-top-binds #-}
+
 
 module MyBooksSrv.MyBooksSrv(runWithDB) where
 
@@ -33,7 +35,8 @@ mkYesod "MyBooksSrv" [parseRoutes|
 
   /api/personList ApiPersonListR GET
   /api/person ApiInsertPersonR PUT
-  /api/book ApiBookR GET
+
+  /api/booklist ApiBookListR GET
 
 |]
 
@@ -85,13 +88,13 @@ putApiInsertPersonR = do
   person <- requireJsonBody :: Handler Person
   key <- liftIO $ insertPerson cfg person
   returnJson key
-  
-  
-getApiBookR :: Handler Value
-getApiBookR = do
+
+
+getApiBookListR :: Handler Value
+getApiBookListR = do
   (MyBooksSrv cfg) <- getYesod
-  ps <- liftIO $ getAllBooks cfg
-  returnJson ps
+  bs <- liftIO $ getBookList cfg
+  returnJson bs
 
 
 runWithDB :: IO ()

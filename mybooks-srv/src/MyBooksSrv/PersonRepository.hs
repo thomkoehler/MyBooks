@@ -29,10 +29,10 @@ getPerson :: Config -> PersonId -> IO (Maybe Person)
 getPerson config personId = runSqliteDb config $ do
   ps <- selectList [PersonId ==. personId] [LimitTo 1]
   case ps of
-    ((Entity _ p):_) -> return $ Just p
+    Entity _ p : _ -> return $ Just p
     _ -> return Nothing
 
 
 insertPerson :: Config -> Person -> IO PersonId
-insertPerson config person = runSqliteDb config $ insert person
+insertPerson config = runSqliteDb config . insert
 

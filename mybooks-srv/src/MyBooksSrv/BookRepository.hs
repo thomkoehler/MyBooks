@@ -4,7 +4,9 @@
 
 module MyBooksSrv.BookRepository
 (
-  getAllBooks
+  getBookList,
+  getBook,
+  insertBook
 ) where
 
 import Data.Text(Text)
@@ -16,8 +18,20 @@ import MyBooksSrv.DbRepository
 import MyBooksSrv.Config
 
 
-getAllBooks :: Config -> IO [Book]
-getAllBooks config = runSqliteDb config $ do
-  bs <- selectList [] []
-  return $ map (\(Entity _ r) -> r) bs
+getBookList :: Config -> IO [BookListItem]
+getBookList config = runSqliteDb config $ do
+  rawList :: [(BookId, Single Text)] <- rawSql "SELECT id, title FROM book" []
+  return $ map (\(i, t) -> BookListItem i (unSingle t)) rawList
+
+
+getBook :: Config -> BookId -> IO (Maybe Book)
+getBook config bookId = runSqliteDb config $ do
+  ps <- selectList [BookId ==. bookId] [LimitTo 1]
+  case ps of
+    Entity _ p : _ -> return $ Just p
+    _ -> return Nothing
+
+
+insertBook :: Config -> Book -> IO BookId
+insertBook config = runSqliteDb config . insert
 
