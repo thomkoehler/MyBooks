@@ -6,12 +6,14 @@ module MyBooksSrv.PersonRepository
 (
   getPersonList,
   getPerson,
-  insertPerson
+  insertPerson,
+  setPersonHashtag
 )
 where
 
 import Data.Text(Text)
 import Database.Persist.Sql
+import Control.Monad
 
 import MyBooksSrv.DomainModels
 import MyBooksSrv.DbModels
@@ -36,3 +38,24 @@ getPerson config personId = runSqliteDb config $ do
 insertPerson :: Config -> Person -> IO PersonId
 insertPerson config = runSqliteDb config . insert
 
+
+
+{- TODO
+getPersonHashtags :: Config -> PersonId -> IO [Text]
+getPersonHashtags config personId = runSqliteDb config $ do
+   hps <- selectList [PersonHashtagPersonId ==. personId] []
+   let hashtagIds = map (\(Entity k _) -> k) hps
+   forM hashtagIds $ \hashtagId -> do
+      hts <- selectList [Hashtagid ==. hashtagId] [LimitTo 1]
+      case hts of
+-}
+
+
+setPersonHashtag :: Config -> PersonId -> Text -> IO ()
+setPersonHashtag config personId hashtag = do
+   hashtagId <- getOrCreateHashtag config hashtag
+   runSqliteDb config $ do
+      phs <- selectList [PersonHashtagPersonId ==. personId, PersonHashtagHashtagId ==. hashtagId] [LimitTo 1]
+      case phs of
+         [] -> void $ insert $ PersonHashtag personId hashtagId
+         _  -> return ()
