@@ -1,35 +1,27 @@
 import {Component, OnInit} from '@angular/core';
-
-import {BooksService} from './books.service';
+import {DataSource} from '@angular/cdk/table';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/Rx'; 
 
 @Component({
   selector: 'books',
+  templateUrl: './books.component.html',
   styleUrls: ['./books.component.css'],
-  templateUrl: './books.component.html'
 })
 
-export class BooksComponent implements OnInit {
 
-  static books = [
-    {
-      id: 1,
-      title: 'Solaris'
-    },
-    {
-      id: 2,
-      title: 'Metro 2033'
-    }
-  ];
+export class BooksComponent {
+  public dataSource: BooksDataSource = new BooksDataSource();
 
-  constructor(private booksService: BooksService) {
+  public displayedColumns = ['id', 'firstName', 'lastName'];
+}
 
+
+export class BooksDataSource extends DataSource<any> {
+  public connect(): Observable<Array<any>> {
+    return Observable.of([{'id': 1, 'firstName': 'fname', 'lastName': 'lname'}]);
   }
 
-  ngOnInit() {
-
-  }
-
-  books() {
-    return BooksComponent.books;
+  public disconnect() {
   }
 }

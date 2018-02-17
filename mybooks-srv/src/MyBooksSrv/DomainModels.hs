@@ -25,7 +25,7 @@ instance FromJSON BookListItem
 
 
 instance Eq BookListItem where
-  left == right = (title left) == (title right)
+  left == right = title left == title right
 
 
 instance Ord BookListItem where
@@ -47,7 +47,7 @@ instance FromJSON PersonListItem
 
 
 instance Eq PersonListItem where
-  left == right = (firstName left) == (firstName right) && (lastName left) == (lastName right)
+  left == right = firstName left == firstName right && lastName left == lastName right
 
 instance Ord PersonListItem where
   compare left right =

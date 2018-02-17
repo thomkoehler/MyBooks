@@ -7,52 +7,32 @@
 
 module MyBooksSrv.DbRepository
 (
-  getAllBooks,
   importData,
-  insertPerson,
   runSqliteDb,
-  getPersonList
-) 
+  getOrCreateHashtag
+)
 where
 
 import Control.Monad
 import Control.Monad.Logger
 import Control.Monad.Trans.Reader
 import Database.Persist.Sqlite
-import Database.Persist.Sql
 import Data.Text(Text)
 import Text.Printf
 
 import MyBooksSrv.DbModels
 import MyBooksSrv.Config
 import MyBooksSrv.ImportData
-import MyBooksSrv.DomainModels
 
 
 type DbAction a = ReaderT SqlBackend (LoggingT IO) a
 
 
 runSqliteDb :: Config -> DbAction a -> IO a
-runSqliteDb config action = 
+runSqliteDb config action =
   runStderrLoggingT $ withSqliteConn (database config) $ \sqlbackend -> runSqlConn action sqlbackend
 
 
-getPersonList :: Config -> IO [PersonListItem]
-getPersonList config = runSqliteDb config $ do
-  rawList :: [(PersonId, Single Text, Single Text)] <- rawSql "SELECT id, first_name, last_name FROM person" []
-  return $ map (\(i, fn, ln) -> PersonListItem i (unSingle fn) (unSingle ln)) rawList
-
-
-insertPerson :: Config -> Person -> IO PersonId
-insertPerson config person = runSqliteDb config $ insert person
-  
-  
-getAllBooks :: Config -> IO [Book]
-getAllBooks config = runSqliteDb config $ do
-  bs <- selectList [] []
-  return $ map (\(Entity _ r) -> r) bs
-
-  
 importData :: ImportData -> Config -> IO ()
 importData (ImportData bs ps) config = runSqliteDb config $ do
   forM_ bs importBook
@@ -65,7 +45,7 @@ importBook bk = do
   when (null bs) $ void $ insert bk
   return ()
 
-  
+
 importPerson :: ImportPerson -> DbAction ()
 importPerson (ImportPerson p bs) = do
   ps <- selectList [PersonFirstName ==. personFirstName p, PersonLastName ==. personLastName p] [LimitTo 1]
@@ -75,14 +55,22 @@ importPerson (ImportPerson p bs) = do
   forM_ bs $ insertBookAuthor personKey
   return ()
 
-  
+
 insertBookAuthor :: Key Person -> String -> DbAction ()
-insertBookAuthor personKey bookIsbn13 = do
-  bs <- selectList [BookIsbn13 ==. bookIsbn13] [LimitTo 1]
+insertBookAuthor personKey isbn = do
+  bs <- selectList [BookIsbn13 ==. isbn] [LimitTo 1]
   case bs of
     [Entity bookKey _] -> do
       bas <- selectList [BookAuthorBookId ==. bookKey, BookAuthorPersonId ==. personKey] [LimitTo 1]
       case bas of
         [] -> void $ insert $ BookAuthor bookKey personKey
         _ -> return ()
-    _ -> error $ printf "Error: Book '%s' not found." bookIsbn13
+    _ -> error $ printf "Error: Book '%s' not found." isbn
+
+
+getOrCreateHashtag :: Config -> Text -> IO HashtagId
+getOrCreateHashtag config hashtag = runSqliteDb config $ do
+   hs <- selectList [HashtagName ==. hashtag] [LimitTo 1]
+   case hs of
+      [Entity k _]  -> return k
+      _ -> insert $ Hashtag hashtag

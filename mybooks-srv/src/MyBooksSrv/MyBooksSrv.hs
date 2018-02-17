@@ -3,7 +3,9 @@
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE ViewPatterns      #-}
+{-# LANGUAGE ViewPatterns #-}
+{-# OPTIONS_GHC -fno-warn-unused-top-binds #-}
+
 
 module MyBooksSrv.MyBooksSrv(runWithDB) where
 
@@ -18,6 +20,8 @@ import MyBooksSrv.DbRepository
 import MyBooksSrv.Config
 import MyBooksSrv.Utilities
 import MyBooksSrv.DomainModels
+import MyBooksSrv.PersonRepository
+import MyBooksSrv.BookRepository
 
 
 data MyBooksSrv = MyBooksSrv Config
@@ -31,7 +35,8 @@ mkYesod "MyBooksSrv" [parseRoutes|
 
   /api/personList ApiPersonListR GET
   /api/person ApiInsertPersonR PUT
-  /api/book ApiBookR GET
+
+  /api/booklist ApiBookListR GET
 
 |]
 
@@ -61,8 +66,13 @@ getPersonListR = do
 |]
 
 
-getPersonR :: Int64 -> Handler Html
-getPersonR personId = defaultLayout [whamlet|<h1>Person #{personId}|]
+getPersonR :: Int64 -> Handler Value
+getPersonR personId = do
+  (MyBooksSrv cfg) <- getYesod
+  mbp <- liftIO $ getPerson cfg $ toSqlKey personId
+  case mbp of
+    Nothing -> notFound
+    (Just p) -> returnJson p
 
 
 getApiPersonListR :: Handler Value
@@ -78,13 +88,13 @@ putApiInsertPersonR = do
   person <- requireJsonBody :: Handler Person
   key <- liftIO $ insertPerson cfg person
   returnJson key
-  
-  
-getApiBookR :: Handler Value
-getApiBookR = do
+
+
+getApiBookListR :: Handler Value
+getApiBookListR = do
   (MyBooksSrv cfg) <- getYesod
-  ps <- liftIO $ getAllBooks cfg
-  returnJson ps
+  bs <- liftIO $ getBookList cfg
+  returnJson bs
 
 
 runWithDB :: IO ()

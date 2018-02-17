@@ -51,7 +51,7 @@ BookHashtag json
   deriving Show
 
 PersonHashtag json
-  personId BookId
+  personId PersonId
   hashtagId HashtagId
   UniquePersonIdHashtagId personId hashtagId
   deriving Show
