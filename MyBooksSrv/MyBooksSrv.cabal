@@ -33,11 +33,16 @@ library
   build-depends:
       base >=4.7 && <5,
       sqlite-simple -any,
-      text -any
+      text -any,
+      raw-strings-qq -any,
+      aeson -any,
+      mtl -any,
+      yesod -any
 
   exposed-modules:
       DomainModels.Book
       DomainModels.Person
+      MyBooksSrv
 
   other-modules:
       Paths_MyBooksSrv

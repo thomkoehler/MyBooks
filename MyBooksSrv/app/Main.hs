@@ -1,6 +1,6 @@
 module Main where
 
-import DomainModels.Book
+import MyBooksSrv
 
 main :: IO ()
-main = putStrLn "Hello World"
+main = runWithDB

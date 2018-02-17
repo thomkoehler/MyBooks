@@ -1,8 +1,12 @@
 
+{-# LANGUAGE TemplateHaskell #-}
+
 module DomainModels.Book where
 
 import Data.Text
 import Data.Int
+import Data.Aeson
+import Data.Aeson.TH
 
 
 data Book = Book 
@@ -11,4 +15,5 @@ data Book = Book
       title :: Text,
       isbn13 :: String
   }
-  deriving Show
+
+deriveJSON defaultOptions ''Book
