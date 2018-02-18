@@ -1,6 +1,6 @@
 module Main where
 
-import MyBooksSrv
+import MyBooksSrv.MyBooksSrv
 
 main :: IO ()
 main = runWithDB

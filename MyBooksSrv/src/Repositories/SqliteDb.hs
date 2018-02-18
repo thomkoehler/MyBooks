@@ -2,8 +2,9 @@
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Repositories.SqliteDb where
+module Repositories.SqliteDb(initDb) where
 
+import qualified Data.Text.IO as TIO
 import Database.SQLite.Simple
 import Text.RawString.QQ
 import Control.Monad.Reader
@@ -30,8 +31,8 @@ CREATE TABLE IF NOT EXISTS Person
 
 |]
 
-main :: IO ()
-main = do
-  conn <- open "test.db"
+
+initDb :: String -> IO ()
+initDb db = withConnection db $ \conn -> do
+  setTrace conn $ Just TIO.putStrLn 
   execute_ conn initSql
-  close conn

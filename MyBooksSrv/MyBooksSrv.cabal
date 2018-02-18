@@ -37,14 +37,16 @@ library
       raw-strings-qq -any,
       aeson -any,
       mtl -any,
-      yesod -any
+      yesod -any,
+      bytestring -any
 
   exposed-modules:
       DomainModels.Book
       DomainModels.Person
-      MyBooksSrv
+      MyBooksSrv.MyBooksSrv
 
   other-modules:
+      Repositories.PersonRepository
       Paths_MyBooksSrv
 
   default-language: Haskell2010
