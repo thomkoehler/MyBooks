@@ -9,11 +9,17 @@ import Database.SQLite.Simple
 import Text.RawString.QQ
 import Control.Monad.Reader
 
+import Utilities.SqliteDb
+
+
 
 type SqliteM a = ReaderT Connection IO a
 
-
 initSql = [r| 
+
+PRAGMA foreign_keys=ON;
+
+PRAGMA foreign_key_check;
 
 CREATE TABLE IF NOT EXISTS Book
 (
@@ -32,7 +38,8 @@ CREATE TABLE IF NOT EXISTS Person
 |]
 
 
+
 initDb :: String -> IO ()
 initDb db = withConnection db $ \conn -> do
   setTrace conn $ Just TIO.putStrLn 
-  execute_ conn initSql
+  execMany ";" conn initSql

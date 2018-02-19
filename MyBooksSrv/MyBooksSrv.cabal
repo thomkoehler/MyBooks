@@ -38,8 +38,9 @@ library
       aeson -any,
       mtl -any,
       yesod -any,
-      bytestring -any
-
+      bytestring -any,
+      split -any
+	  
   exposed-modules:
       DomainModels.Book
       DomainModels.Person
