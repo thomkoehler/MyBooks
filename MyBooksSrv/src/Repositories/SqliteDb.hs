@@ -38,7 +38,6 @@ CREATE TABLE IF NOT EXISTS Person
 |]
 
 
-
 initDb :: String -> IO ()
 initDb db = withConnection db $ \conn -> do
   setTrace conn $ Just TIO.putStrLn 
