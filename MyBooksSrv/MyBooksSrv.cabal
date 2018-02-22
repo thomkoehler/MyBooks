@@ -47,6 +47,7 @@ library
   other-modules:
     DomainModels.Book
     DomainModels.Person
+    DomainModels.PersonImport
     Repositories.PersonRepository
     MyBooksSrv.Config
     Repositories.DbError
