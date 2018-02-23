@@ -22,10 +22,10 @@ import DomainModels.Person
 
 data MyBooksSrv = MyBooksSrv Config
 
-runWithDB :: IO ()
-runWithDB = do
-  cfg <- loadFromFile "config.json"
-  initDb $ database cfg
+runWithDB :: String -> IO ()
+runWithDB cfgFileName = do
+  cfg <- loadFromFile cfgFileName
+  initDb cfg
   warp (srvPort cfg) (MyBooksSrv cfg)
 
 
@@ -57,6 +57,7 @@ getPersonR personId = do
     Nothing -> notFound
     (Just p) -> returnJson p
 
+    
 getPersonListR :: Handler Html
 getPersonListR = do
   (MyBooksSrv cfg) <- getYesod
@@ -66,7 +67,7 @@ getPersonListR = do
     <h1>PersonList
     <body>
       <ol>
-        $forall (Person i ln fn) <- sortedPs
+        $forall (Person i ln fn _) <- sortedPs
           <li><a href=@{PersonR i}>#{ln}, #{fn}
 |]
 

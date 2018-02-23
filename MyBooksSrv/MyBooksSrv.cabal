@@ -49,11 +49,14 @@ library
     DomainModels.Person
     DomainModels.PersonImport
     Repositories.PersonRepository
+    Repositories.SqliteM
+    Repositories.DefaultDataRepository
     MyBooksSrv.Config
     Repositories.DbError
     Repositories.SqliteDb
     Utilities.File
     Utilities.SqliteDb
+    DomainModels.DefaultData
 
   default-language: 
     Haskell2010

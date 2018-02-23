@@ -1,7 +1,8 @@
 
 module Utilities.SqliteDb
 (
-	execMany
+  execMany,
+  fromOnlies
 ) 
 where
 
@@ -19,6 +20,10 @@ isNotEmptyString str = isJust $ find (\c -> not (isSpace c)) str
 
 
 execMany :: String -> Connection -> String -> IO ()
-execMany delimiter conn query = do
-  let queries = map fromString . filter isNotEmptyString $ splitOn delimiter query
+execMany delimiter conn queryStr = do
+  let queries = map fromString . filter isNotEmptyString $ splitOn delimiter queryStr
   forM_ queries (execute_ conn)
+  
+
+fromOnlies :: [Only a] -> [a]
+fromOnlies = map (\(Only x) -> x)

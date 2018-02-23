@@ -2,19 +2,26 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes       #-}
 
-module Repositories.SqliteDb(initDb) where
+module Repositories.SqliteDb
+(
+  SqliteM, 
+  runSqliteM,
+  initDb
+) 
+where
 
+import Control.Monad.IO.Class
 import Control.Monad.Reader
-import qualified Data.Text.IO as TIO
-import Database.SQLite.Simple
 import Text.RawString.QQ
 
+import Repositories.SqliteM
+import Repositories.DefaultDataRepository
+import MyBooksSrv.Config
+import Utilities.File
 import Utilities.SqliteDb
 
-
-
-type SqliteM a = ReaderT Connection IO a
-
+  
+initSql :: String
 initSql = [r|
 
 PRAGMA foreign_keys=ON;
@@ -52,8 +59,11 @@ CREATE TABLE IF NOT EXISTS BookAuthor
 
 |]
 
-
-initDb :: String -> IO ()
-initDb db = withConnection db $ \conn -> do
-  setTrace conn $ Just TIO.putStrLn
-  execMany ";" conn initSql
+initDb :: Config -> IO ()
+initDb cfg = runSqliteM cfg $ do
+  conn <- ask
+  liftIO $ execMany ";" conn initSql
+  let defDataFileName = defaultData cfg
+  when (not (null defDataFileName)) $ do
+    defData <- liftIO $ loadFromFile defDataFileName
+    importDefaultData defData 

@@ -5,12 +5,12 @@ module MyBooksSrv.Config where
 
 import Data.Aeson
 import Data.Aeson.TH
-import Data.Text
 
 data Config = Config
   {
     database :: String,
-    srvPort :: Int
+    srvPort :: Int,
+    defaultData :: String
   }
 
 deriveJSON defaultOptions ''Config

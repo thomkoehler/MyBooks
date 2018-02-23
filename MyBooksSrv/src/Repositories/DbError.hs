@@ -1,6 +1,4 @@
 
-{-# DeriveDataTypeable #-}
-
 module Repositories.DbError where
 
 

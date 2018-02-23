@@ -13,7 +13,8 @@ data Person = Person
   {
     id :: Int64,
     firstName :: Text,
-    lastName :: Text
+    lastName :: Text,
+    description :: Text
   }
   deriving(Eq, Ord)
   

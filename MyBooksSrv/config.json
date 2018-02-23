@@ -1,5 +1,6 @@
 
 {
   "database": "MyBooks.sqlite",
-  "srvPort": 3000
+  "srvPort": 3000,
+  "defaultData": "defaultData.json"
 }

@@ -1,0 +1,24 @@
+{
+  "persons": [
+    {  
+      "person": { "id": 0, "lastName": "Lem", "firstName": "Stanislaw", "description": "" },
+      "books": []
+    },
+    
+    {  
+      "person": { "id": 0, "lastName": "Dick", "firstName": "Philip Kindren", "description": "" },
+      "books": []
+    },
+    
+    {  
+      "person": { "id": 0, "lastName": "Simmons", "firstName": "Dan", "description": "" },
+      "books": []
+    },
+    
+    {  
+      "person": { "id": 0, "lastName": "Egan", "firstName": "Greg", "description": "" },
+      "books": []
+    }
+    
+  ]
+}
