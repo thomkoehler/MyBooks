@@ -73,5 +73,5 @@ updatePerson_ person personId = do
 insertPerson_ :: Person -> SqliteM Int64
 insertPerson_ person = do
   conn <- ask
-  liftIO $ execute conn "INSERT INTO Person(firstName, lastName) VALUES(?, ?)" (person)
+  liftIO $ execute conn "INSERT INTO Person(firstName, lastName, description) VALUES(?, ?, ?)" (person)
   liftIO $ lastInsertRowId conn
