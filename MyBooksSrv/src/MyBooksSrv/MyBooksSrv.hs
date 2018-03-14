@@ -12,6 +12,7 @@ import Yesod
 
 import Data.Int
 import Data.List
+import Prelude hiding(id)
 
 import MyBooksSrv.Config
 import Utilities.File
@@ -67,8 +68,8 @@ getPersonListR = do
     <h1>PersonList
     <body>
       <ol>
-        $forall (Person i ln fn _) <- sortedPs
-          <li><a href=@{PersonR i}>#{ln}, #{fn}
+        $forall person <- sortedPs
+          <li><a href=@{PersonR (id person)}>#{lastName person}, #{firstName person}
 |]
 
 
